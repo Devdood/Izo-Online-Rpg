@@ -8,6 +8,7 @@ public class Character : MonoBehaviour
     [SerializeField]
     private CharacterController controller;
 
+    public GameObject baseModel;
     public Animator Animator;
 
     [SerializeField]

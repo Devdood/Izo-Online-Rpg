@@ -153,6 +153,7 @@ public class GamePacketsImpl
         CharacterData data = new CharacterData()
         {
             id = reader.ReadInt32(),
+            baseId = reader.ReadInt32(),
             nickname = reader.ReadString(),
             posX = reader.ReadInt16(),
             posZ = reader.ReadInt16(),

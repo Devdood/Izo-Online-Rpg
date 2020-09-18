@@ -64,6 +64,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controller: {fileID: 7373947401542645793}
+  baseModel: {fileID: 7373947401564808259}
   Animator: {fileID: 2085004664649899219}
   speed: 13
 --- !u!143 &7373947401542645793

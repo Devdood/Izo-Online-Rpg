@@ -22,7 +22,7 @@ public class NicknameHoverLabel : MonoBehaviour
 
     public void Fill(Character target)
     {
-        nameText.text = target.name;
+        nameText.text = target.Data.nickname;
         this.target = target.transform;
     }
 }

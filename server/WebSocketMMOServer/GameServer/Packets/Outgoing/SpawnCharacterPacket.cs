@@ -12,6 +12,7 @@ namespace WebSocketMMOServer.GameServer.Packets.Outgoing
 
             StatsContainer stats = character.GetStatsContainer();
             writer.Write(character.Id);
+            writer.Write(character.BaseId);
             writer.Write((string)stats.GetStat(StatType.NAME).value);
             writer.Write((short)stats.GetStat(StatType.POS_X).value);
             writer.Write((short)stats.GetStat(StatType.POS_Z).value);

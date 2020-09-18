@@ -183,6 +183,8 @@ namespace WebSocketMMOServer
         {
             short posX = reader.ReadInt16();
             short posZ = reader.ReadInt16();
+
+            client.SelectedCharacter.SelectionState = SelectionState.SELECTION;
             SetDestinationLogic(client, posX, posZ);
         }
 

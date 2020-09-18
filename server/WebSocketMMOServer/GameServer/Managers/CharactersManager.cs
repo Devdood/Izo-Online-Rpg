@@ -15,10 +15,38 @@ namespace WebSocketMMOServer.GameServer
         public Dictionary<int, Player> players = new Dictionary<int, Player>();
         public Dictionary<int, Client> clients = new Dictionary<int, Client>();
 
+        public Dictionary<int, MobData> mobsDataList = new Dictionary<int, MobData>();
+
+        public class MobData
+        {
+            public int baseId;
+            public string name;
+            public int level;
+            public int health;
+            public int expReward;
+        }
+
         public static int lastId = 1;
 
         public CharactersManager()
         {
+            DataTable mobsProtoTable = DatabaseManager.ReturnQuery("SELECT * FROM mobs_proto");
+            for (int i = 0; i < mobsProtoTable.Rows.Count; i++)
+            {
+                DataRow row = mobsProtoTable.Rows[i];
+
+                MobData data = new MobData()
+                {
+                    baseId = (int)row["id"],
+                    name = (string)row["name"],
+                    level = (sbyte)row["lvl"],
+                    health = (int)row["health"],
+                    expReward = (int)row["exp_reward"],
+                };
+
+                mobsDataList.Add(data.baseId, data);
+            }
+
             DataTable mobsTable = DatabaseManager.ReturnQuery("SELECT * FROM mobs");
             for (int i = 0; i < mobsTable.Rows.Count; i++)
             {
@@ -26,8 +54,13 @@ namespace WebSocketMMOServer.GameServer
 
                 int id = lastId++;
                 Mob x = CharactersManager.CreateMob(id);
+                x.BaseId = (int)row["base_id"];
+                MobData data = mobsDataList[x.BaseId];
+
                 StatsContainer stats = x.GetStatsContainer();
-                stats.SetStat(StatType.NAME, "Gnome");
+                stats.SetStat(StatType.NAME, (string)data.name);
+                stats.SetStat(StatType.LEVEL, (short)data.level);
+                stats.SetStat(StatType.HEALTH, (int)data.health);
                 stats.SetStat(StatType.POS_X, (short)row["pos_x"]);
                 stats.SetStat(StatType.POS_Z, (short)row["pos_z"]);
                 x.SetSpawnPosition((short)row["pos_x"], (short)row["pos_z"]);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -15,9 +16,14 @@ public class CharactersManager : MonoBehaviour
     public event Action<int, Character> OnCharacterSpawned = delegate { };
     public event Action<int, Character> OnCharacterDespawned = delegate { };
 
+    public List<MobData> mobs { get; private set; } = new List<MobData>();
+
     private void Awake()
     {
         Instance = this;
+
+        mobs = Resources.LoadAll<MobData>("Data/Mobs").ToList();
+    
     }
 
     public void SpawnCharacter(CharacterData spawnData)
@@ -29,6 +35,20 @@ public class CharactersManager : MonoBehaviour
 
         Character character = Instantiate(characterPrefab, new Vector3(spawnData.posX, 1, spawnData.posZ), Quaternion.identity, transform);
         character.Data = spawnData;
+
+        MobData mobData = GetMobData(spawnData.baseId);
+        if(mobData != null)
+        {
+            GameObject model = Instantiate(mobData.characterModel, character.transform.position - Vector3.up, character.transform.rotation, character.transform);
+            Animator modelAnimator = model.GetComponent<Animator>();
+            character.Animator.runtimeAnimatorController = modelAnimator.runtimeAnimatorController;
+            character.Animator.avatar = modelAnimator.avatar;
+            Destroy(modelAnimator);
+            character.Animator.Rebind();
+
+            Destroy(character.baseModel);
+            character.baseModel = model;
+        }
 
         OnCharacterSpawned(spawnData.id, character);
         characters.Add(spawnData.id, character);
@@ -42,6 +62,11 @@ public class CharactersManager : MonoBehaviour
         }
 
         return null;
+    }
+
+    public MobData GetMobData(int id)
+    {
+        return mobs.Find(m => m.id == id);
     }
 
     public Character GetLocalPlayer()
@@ -66,6 +91,7 @@ public class CharactersManager : MonoBehaviour
 public class CharacterData
 {
     public int id;
+    public int baseId;
     public string nickname;
     public byte lvl;
     public short posX;

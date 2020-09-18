@@ -8,6 +8,7 @@ namespace WebSocketMMOServer.GameServer
     public class Character
     {
         public int Id { get; set; }
+        public virtual int BaseId { get; set; } = 0;
         public SelectionState SelectionState { get; set; }
         public HashSet<int> lastSeenCharacters = new HashSet<int>();
 
