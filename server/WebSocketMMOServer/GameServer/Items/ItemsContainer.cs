@@ -68,6 +68,19 @@ namespace WebSocketMMOServer.GameServer
             }
         }
 
+        public void AddItemToFreeSlot(ItemData item, bool ignoreEvents = false)
+        {
+            int slot = GetFreeSlot();
+            if (slot != -1)
+            {
+                if (!Items.ContainsKey(slot))
+                {
+                    Items[slot] = item;
+                    InventoryChanged(this);
+                }
+            }
+        }
+
         public void RemoveItem(int slot, bool ignoreEvents = false)
         {
             if (Items.ContainsKey(slot))

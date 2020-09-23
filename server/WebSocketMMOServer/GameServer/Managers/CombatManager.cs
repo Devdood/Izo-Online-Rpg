@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Numerics;
 using System.Text;
 using WebSocketMMOServer.GameServer.Packets.Outgoing;
@@ -119,7 +120,7 @@ namespace WebSocketMMOServer.GameServer
                         killerContainer.SetStat(StatType.LEVEL, (short)(level + 1));
 
                     }
-
+                    
                     int goldReward = new Random().Next(20, 100);
                     character.AddStatInt(StatType.GOLD, goldReward);
 
@@ -137,9 +138,11 @@ namespace WebSocketMMOServer.GameServer
                             }));
                         }
                     }
+
+                    ServerManager.Instance.QuestsManager.ExecuteEvent(QuestEvent.MONSTER_DEFEAT, ((Player)character).DatabaseId, target.BaseId);
                 }
-                
-                if(character is Mob)
+
+                if (character is Mob)
                 {
                     Mob m = character as Mob;
                     m.SnapToPosition(m.StartPosX, m.StartPosZ);

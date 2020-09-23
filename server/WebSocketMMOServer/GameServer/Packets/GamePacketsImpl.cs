@@ -108,7 +108,7 @@ namespace WebSocketMMOServer
                 {
                     attackerId = arg1.SelectedCharacter.Id,
                     targetId = target.Id,
-                    damage = (ushort)new Random().Next(30, 60),
+                    damage = (ushort)new Random().Next(data.minDmg, data.maxDmg),
                     damageType = 0
                 });
             }

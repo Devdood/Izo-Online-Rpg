@@ -9,6 +9,7 @@ public class SkillDataHandler : ScriptableObject
 {
     public int id;
     public string name;
+    public string description;
     public Class charClass;
     public int reqLvl;
     public Sprite icon;

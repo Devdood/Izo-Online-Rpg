@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using WebSocketMMOServer.Database;
+using WebSocketMMOServer.GameServer.Managers;
 
 namespace WebSocketMMOServer.GameServer
 {
@@ -20,6 +21,7 @@ namespace WebSocketMMOServer.GameServer
         public FieldOfViewManager fovManager { get; private set; }
         public SkillsManager SkillsManager { get; private set; }
         public ShopManager ShopManager { get; private set; }
+        public QuestsManager QuestsManager { get; private set; }
 
         public ServerManager()
         {
@@ -36,6 +38,8 @@ namespace WebSocketMMOServer.GameServer
             CombatManager = new CombatManager(TickManager, CharactersManager);
             RespawnManager = new RespawnManager(TickManager, CharactersManager);
             fovManager = new FieldOfViewManager(TickManager, CharactersManager);
+
+            QuestsManager = new QuestsManager();
         }
     }
 }

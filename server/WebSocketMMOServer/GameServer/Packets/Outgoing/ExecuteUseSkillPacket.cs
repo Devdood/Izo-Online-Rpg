@@ -13,7 +13,6 @@ namespace WebSocketMMOServer.GameServer.Packets.Outgoing
             writer.Write(userId);
             writer.Write(targetId);
             writer.Write(skillId);
-
         }
     }
 }
