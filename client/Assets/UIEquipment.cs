@@ -19,7 +19,7 @@ public class ItemsContainerInventory : MonoBehaviour
     [SerializeField]
     private ItemContainerId containerId;
 
-    private void Awake()
+    protected virtual void Awake()
     {
         InventoryButton[] bts = itemsParent.GetComponentsInChildren<InventoryButton>();
         for (int i = 0; i < bts.Length; i++)

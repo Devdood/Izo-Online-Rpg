@@ -15,5 +15,6 @@ namespace WebSocketMMOServer
         USE_SKILL = 21,
         REQUEST_ITEM_ACTION = 22,
         CHAT_MESSAGE_PACKET = 23,
+        REGISTER_REQUEST = 24,
     }
 }

@@ -29,7 +29,7 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        if(Input.GetMouseButtonDown(0) && !MouseOverUi())
+        if (Input.GetMouseButtonDown(0) && !MouseOverUi())
         {
             Ray r = Camera.main.ScreenPointToRay(Input.mousePosition);
             if(Physics.Raycast(r, out RaycastHit hit, clickMask))
@@ -39,6 +39,7 @@ public class PlayerController : MonoBehaviour
                 if (target != null)
                 {
                     SelectionController.Instance.RequestSelectTarget(target.Data.id, 1);
+                    TargetController.Instance.SetTarget(target);
                 }
                 else
                 {

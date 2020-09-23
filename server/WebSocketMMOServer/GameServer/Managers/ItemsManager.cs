@@ -36,6 +36,12 @@ namespace WebSocketMMOServer.GameServer
             return null;
         }
 
+        public ItemData CreateItemData(ItemData item)
+        {
+            item.uniqueId = lastItemId++;
+            return item;
+        }
+
         public void AddInventoryForCharacter(Player character)
         {
             if (inventoryContainers.ContainsKey(character.Id))

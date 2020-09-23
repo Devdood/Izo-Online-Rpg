@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using WebSocketMMOServer.Database;
@@ -22,7 +23,35 @@ namespace WebSocketMMOServer
             { GamePacketType.USE_SKILL, UseSkillImpl },
             { GamePacketType.REQUEST_ITEM_ACTION, RequestItemActionImpl },
             { GamePacketType.CHAT_MESSAGE_PACKET, ChatMessageImpl},
+            { GamePacketType.REGISTER_REQUEST, RegisterRequestImpl },
         };
+
+        private static void RegisterRequestImpl(Client client, BinaryReader reader)
+        {
+            string username = reader.ReadString();
+            string password = reader.ReadString();
+            string password2 = reader.ReadString();
+            string email = reader.ReadString();
+
+            if(string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(password2) || string.IsNullOrEmpty(email))
+            {
+                return;
+            }
+
+            if(password != password2)
+            {
+                return;
+            }
+
+            long registerAccountId = DatabaseManager.InsertQuery(string.Format("INSERT INTO accounts(username, password, email) VALUES ('{0}', '{1}', '{2}')", username, password, email));
+
+            if(registerAccountId == -1)
+            {
+                return;
+            }
+
+            LoginExecute(client, username, password);
+        }
 
         private static void ChatMessageImpl(Client arg1, BinaryReader reader)
         {
@@ -128,6 +157,24 @@ namespace WebSocketMMOServer
                         if (targetContainerId == ItemsContainerId.INVENTORY)
                         {
                             Console.WriteLine("Buy item slot: " + sourceSlot);
+
+                            ShopContainer shop = ServerManager.Instance.ShopManager.GetShop(((Player)arg1.SelectedCharacter).SelectedVendorId);
+                            if(shop != null)
+                            {
+                                if(shop.items.GetItem(sourceSlot, out ItemData data))
+                                {
+                                    int freeInventorySlot = arg1.SelectedCharacter.GetItemsContainer(ItemsContainerId.INVENTORY).GetFreeSlot();
+                                    if (freeInventorySlot != -1)
+                                    {
+                                        ItemData boughtItem = ServerManager.Instance.ItemsManager.CreateItemData(new ItemData()
+                                        {
+                                            baseId = data.baseId,
+                                        });
+
+                                        arg1.SelectedCharacter.GetItemsContainer(ItemsContainerId.INVENTORY).AddItem(freeInventorySlot, boughtItem);
+                                    }
+                                }
+                            }
                         }
                         return;
                     }
@@ -163,24 +210,43 @@ namespace WebSocketMMOServer
             }
         }
 
-        private static void SetAttackTargetImpl(Client arg1, BinaryReader reader)
+        private static void SetAttackTargetImpl(Client client, BinaryReader reader)
         {
             int targetId = reader.ReadInt32();
             byte action = reader.ReadByte();
 
-            switch(action)
+            Character c = ServerManager.Instance.CharactersManager.GetCharacterById(targetId);
+            if (c == null)
+            {
+                return;
+            }
+
+            switch (action)
             {
                 //SELECT
                 case (byte)0:
-                    arg1.SelectedCharacter.GetStatsContainer().SetStat(StatType.TARGET_ID, (int)targetId);
-                    arg1.SelectedCharacter.SelectionState = SelectionState.SELECTION;
+                    client.SelectedCharacter.GetStatsContainer().SetStat(StatType.TARGET_ID, (int)targetId);
+                    client.SelectedCharacter.SelectionState = SelectionState.SELECTION;
+                    
                     break;
 
                 //ATTACK
                 case (byte)1:
-                    arg1.SelectedCharacter.GetStatsContainer().SetStat(StatType.TARGET_ID, (int)targetId);
-                    arg1.SelectedCharacter.SelectionState = SelectionState.ATTACK;
-                    
+                    if (c.OnClick ==  ClickType.MOB)
+                    {
+                        client.SelectedCharacter.GetStatsContainer().SetStat(StatType.TARGET_ID, (int)targetId);
+                        client.SelectedCharacter.SelectionState = SelectionState.ATTACK;
+                    }
+
+                    if (c.OnClick == ClickType.SHOP)
+                    {
+                        if (ServerManager.Instance.ShopManager.GetShop(c.BaseId, out ShopContainer shopContainer))
+                        {
+                            ((Player)client.SelectedCharacter).SelectedVendorId = c.BaseId;
+                            Server.Instance.SendData(client.ip, new SyncInventoryPacket(shopContainer.items));
+                        }
+                    }
+
                     break;
             }
         }
@@ -197,9 +263,14 @@ namespace WebSocketMMOServer
         {
             string username = reader.ReadString();
             string password = reader.ReadString();
+            
+            LoginExecute(client, username, password);
+        }
 
+        private static void LoginExecute(Client client, string username, string password)
+        {
             DataTable accountsTable = DatabaseManager.ReturnQuery(string.Format("SELECT * FROM accounts WHERE username='{0}' AND password='{1}'", username, password));
-            if(accountsTable.Rows.Count > 0)
+            if (accountsTable.Rows.Count > 0)
             {
                 DataRow accountData = accountsTable.Rows[0];
                 int accountId = (int)accountData["id"];

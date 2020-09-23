@@ -32,6 +32,7 @@ namespace WebSocketMMOServer.GameServer
         }
 
         public float LastAttackTime { get; internal set; }
+        public ClickType OnClick { get; internal set; }
 
         public Character(int id)
         {
@@ -84,5 +85,12 @@ namespace WebSocketMMOServer.GameServer
                 Server.Instance.SendData(item.Value.ip, new SnapPositionPacket(this));
             }
         }
+    }
+
+    public enum ClickType : byte
+    {
+        MOB = 0,
+        SHOP = 1,
+        NPC = 2
     }
 }

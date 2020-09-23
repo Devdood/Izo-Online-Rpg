@@ -24,6 +24,7 @@ namespace WebSocketMMOServer.GameServer
             public int level;
             public int health;
             public int expReward;
+            public ClickType onClick;
         }
 
         public static int lastId = 1;
@@ -42,6 +43,7 @@ namespace WebSocketMMOServer.GameServer
                     level = (sbyte)row["lvl"],
                     health = (int)row["health"],
                     expReward = (int)row["exp_reward"],
+                    onClick = (ClickType)(sbyte)row["on_click"],
                 };
 
                 mobsDataList.Add(data.baseId, data);
@@ -56,6 +58,7 @@ namespace WebSocketMMOServer.GameServer
                 Mob x = CharactersManager.CreateMob(id);
                 x.BaseId = (int)row["base_id"];
                 MobData data = mobsDataList[x.BaseId];
+                x.OnClick = data.onClick;
 
                 StatsContainer stats = x.GetStatsContainer();
                 stats.SetStat(StatType.NAME, (string)data.name);

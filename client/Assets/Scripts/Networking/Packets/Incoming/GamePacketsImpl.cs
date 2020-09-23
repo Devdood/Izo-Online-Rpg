@@ -91,6 +91,11 @@ public class GamePacketsImpl
         }
 
         c.RefreshInventory(inventoryId);
+
+        if(inventoryId == ItemContainerId.SHOP && count != 0)
+        {
+            UIVendor.Instance.GetComponent<UIPanel>().Activate();
+        }
     }
 
     private static void SyncStatImpl(BinaryReader reader)

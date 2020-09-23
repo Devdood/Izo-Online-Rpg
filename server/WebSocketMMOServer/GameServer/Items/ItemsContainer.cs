@@ -45,6 +45,20 @@ namespace WebSocketMMOServer.GameServer
             return -1;
         }
 
+        public bool GetItem(int slot, out ItemData item)
+        {
+            if(Items.ContainsKey(slot))
+            { 
+                item = Items[slot];
+            }
+            else
+            {
+                item = null;
+            }
+
+            return Items.ContainsKey(slot);
+        }
+
         public void AddItem(int slot, ItemData item, bool ignoreEvents = false)
         {
             if (!Items.ContainsKey(slot))

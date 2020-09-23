@@ -131,11 +131,10 @@ namespace WebSocketMMOServer.GameServer
                         int freeSlot = inventory.GetFreeSlot();
                         if (freeSlot != -1)
                         {
-                            inventory.AddItem(freeSlot, new ItemData()
+                            inventory.AddItem(freeSlot, ServerManager.Instance.ItemsManager.CreateItemData(new ItemData()
                             {
                                 baseId = new Random().Next(1, 8),
-                                uniqueId = ServerManager.Instance.ItemsManager.lastItemId++
-                            });
+                            }));
                         }
                     }
                 }
