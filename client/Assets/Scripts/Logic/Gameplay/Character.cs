@@ -123,8 +123,8 @@ public class Character : MonoBehaviour
 
 public class ItemsContainer
 {
-    public byte inventoryId;
     public Dictionary<int, ItemInstance> items = new Dictionary<int, ItemInstance>();
+
     public event Action<ItemsContainer> OnInventoryChanged = delegate { };
 
     public void Refresh()

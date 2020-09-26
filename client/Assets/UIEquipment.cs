@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -66,6 +67,7 @@ public class ItemsContainerInventory : MonoBehaviour
 
     protected virtual void OnInventoryChanged(ItemsContainer ic)
     {
+        Debug.Log(containerId + " changed");
         var list = ic.items;
 
         foreach (var item in items)

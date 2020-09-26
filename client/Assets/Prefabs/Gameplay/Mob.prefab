@@ -89,10 +89,6 @@ MonoBehaviour:
   preloadWardrobeRecipes:
     loadDefaultRecipes: 1
     recipes:
-    - _recipeName: MaleRobe
-      _compatibleRaces:
-      - HumanMale
-      - HumanMaleDCS
     - _recipeName: MaleRobe Hood
       _compatibleRaces:
       - HumanMale
@@ -161,6 +157,7 @@ GameObject:
   - component: {fileID: 7373947401542645792}
   - component: {fileID: 7373947401542645822}
   - component: {fileID: 7373947401542645793}
+  - component: {fileID: 7868004408205180055}
   m_Layer: 8
   m_Name: Mob
   m_TagString: Untagged
@@ -231,3 +228,15 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &7868004408205180055
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7373947401542645820}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dde2f95e98b0330449a595de585f5bd6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

@@ -76,9 +76,15 @@ public class GamePacketsImpl
 
     private static void SyncInventoryImpl(BinaryReader reader)
     {
-        Character c = CharactersManager.Instance.GetLocalPlayer();
+        int characterId = reader.ReadInt32();
+        Character c = CharactersManager.Instance.GetPlayer(characterId);
         ItemContainerId inventoryId = (ItemContainerId)reader.ReadByte();
         ushort count = reader.ReadUInt16();
+        
+        if(inventoryId == ItemContainerId.SHOP)
+        {
+            c = CharactersManager.Instance.GetLocalPlayer();
+        }
 
         c.itemContainers[inventoryId].Clear();
 

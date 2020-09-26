@@ -9,6 +9,9 @@ public class SkillBarSlot : MonoBehaviour
     [SerializeField]
     private Image icon;
 
+    [SerializeField]
+    private Text hotkeyText;
+
     private CanvasGroup group;
     private int skillId;
 
@@ -20,12 +23,17 @@ public class SkillBarSlot : MonoBehaviour
         GetComponent<Button>().onClick.AddListener(Click);
     }
 
-    private void Click()
+    public void Click()
     {
         if(skillId != 0)
         {
             Connection.Instance.SendData(new UseSkillPacket(skillId));
         }
+    }
+
+    public void SetHotkey(string key)
+    {
+        hotkeyText.text = key;
     }
 
     public void Fill(int skillId)

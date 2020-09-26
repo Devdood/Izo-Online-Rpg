@@ -14,6 +14,9 @@ public class ItemHoverPanel : Singleton<ItemHoverPanel>
     [SerializeField]
     private Text descriptionText;
 
+    [SerializeField]
+    private Text reqLvlText;
+
     private void Awake()
     {
         Instance = this;
@@ -23,6 +26,7 @@ public class ItemHoverPanel : Singleton<ItemHoverPanel>
     {
         nameText.text = data.name;
         descriptionText.text = data.description;
+        reqLvlText.text = string.Format("Lv. {0}", data.reqLevel);
     }
 
     private void LateUpdate()

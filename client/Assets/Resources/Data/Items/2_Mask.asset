@@ -15,5 +15,6 @@ MonoBehaviour:
   id: 2
   name: Mask
   icon: {fileID: 21300000, guid: 5ba8be9f4723c964e9937c9ea7d657ea, type: 3}
+  equippable: {fileID: 11400000, guid: 1ca738b353812974b9fb17357f844bbb, type: 2}
   description: Sword with magical power.
   reqLevel: 1

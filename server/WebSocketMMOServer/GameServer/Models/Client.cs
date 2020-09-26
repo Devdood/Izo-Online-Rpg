@@ -42,7 +42,17 @@ namespace WebSocketMMOServer
 
         private void Client_InventoryChanged(ItemsContainer container)
         {
-            Server.Instance.SendData(ip, new SyncInventoryPacket(container));
+            if(container.InventoryId == ItemsContainerId.EQUIPMENT)
+            {
+                foreach (var item in ServerManager.Instance.CharactersManager.GetClientsInRange(SelectedCharacter.Position))
+                {
+                    Server.Instance.SendData(item.Value.ip, new SyncInventoryPacket(container));
+                }
+            }
+            else
+            {
+                Server.Instance.SendData(ip, new SyncInventoryPacket(container));
+            }
         }
 
         private void Container_OnStatChanged(StatType arg1, object arg2)

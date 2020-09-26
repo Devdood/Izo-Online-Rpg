@@ -65,6 +65,23 @@ public class PlayerController : MonoBehaviour
                 }
             }
         }
+
+        if(Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            UISkillBar.Instance.UseSlot(0);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            UISkillBar.Instance.UseSlot(1);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            UISkillBar.Instance.UseSlot(2);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            UISkillBar.Instance.UseSlot(3);
+        }
     }
 
     public void SetPlayer(Character c)

@@ -143,9 +143,7 @@ namespace WebSocketMMOServer
                     {
                         if (sourceContainerId == ItemsContainerId.INVENTORY)
                         {
-                            Console.WriteLine("Sell item");
-                            sourceContainer.RemoveItem(sourceSlot);
-                            arg1.SelectedCharacter.AddStatInt(StatType.GOLD, 100);
+                            SellItem(arg1, sourceSlot, sourceContainer);
                         }
 
 
@@ -156,25 +154,7 @@ namespace WebSocketMMOServer
                     {
                         if (targetContainerId == ItemsContainerId.INVENTORY)
                         {
-                            Console.WriteLine("Buy item slot: " + sourceSlot);
-
-                            ShopContainer shop = ServerManager.Instance.ShopManager.GetShop(((Player)arg1.SelectedCharacter).SelectedVendorId);
-                            if(shop != null)
-                            {
-                                if(shop.items.GetItem(sourceSlot, out ItemData data))
-                                {
-                                    int freeInventorySlot = arg1.SelectedCharacter.GetItemsContainer(ItemsContainerId.INVENTORY).GetFreeSlot();
-                                    if (freeInventorySlot != -1)
-                                    {
-                                        ItemData boughtItem = ServerManager.Instance.ItemsManager.CreateItemData(new ItemData()
-                                        {
-                                            baseId = data.baseId,
-                                        });
-
-                                        arg1.SelectedCharacter.GetItemsContainer(ItemsContainerId.INVENTORY).AddItem(freeInventorySlot, boughtItem);
-                                    }
-                                }
-                            }
+                            BuyItem(arg1, sourceSlot);
                         }
                         return;
                     }
@@ -182,6 +162,19 @@ namespace WebSocketMMOServer
                     if (sourceContainer.Items.ContainsKey(sourceSlot))
                     {
                         var sourceItem = sourceContainer.Items[sourceSlot];
+
+                        if (targetContainerId == ItemsContainerId.EQUIPMENT)
+                        {
+                            //EQUIP ITEM
+                            if (ServerManager.Instance.ItemsManager.GetItemPrototype(sourceItem.baseId, out var prototype))
+                            {
+                                if((short)arg1.SelectedCharacter.GetStat(StatType.LEVEL) < prototype.reqLvl)
+                                {
+                                    return;
+                                }
+                            }
+                        }
+
                         ItemData targetItem = null;
 
                         if (targetContainer.Items.ContainsKey(targetSlot))
@@ -207,6 +200,43 @@ namespace WebSocketMMOServer
                         containers[targetContainerId].Refresh();
                     }
                     break;
+            }
+        }
+
+        private static void SellItem(Client arg1, int sourceSlot, ItemsContainer sourceContainer)
+        {
+            Console.WriteLine("Sell item");
+            sourceContainer.RemoveItem(sourceSlot);
+            arg1.SelectedCharacter.AddStatInt(StatType.GOLD, 100);
+        }
+
+        private static void BuyItem(Client arg1, int sourceSlot)
+        {
+            Console.WriteLine("Buy item slot: " + sourceSlot);
+
+            ShopContainer shop = ServerManager.Instance.ShopManager.GetShop(((Player)arg1.SelectedCharacter).SelectedVendorId);
+            if (shop != null)
+            {
+                if (shop.items.GetItem(sourceSlot, out ItemData data))
+                {
+                    if (ServerManager.Instance.ItemsManager.GetItemPrototype(data.baseId, out ItemPrototype prototype))
+                    {
+                        if ((int)arg1.SelectedCharacter.GetStat(StatType.GOLD) >= prototype.price)
+                        {
+                            int freeInventorySlot = arg1.SelectedCharacter.GetItemsContainer(ItemsContainerId.INVENTORY).GetFreeSlot();
+                            if (freeInventorySlot != -1)
+                            {
+                                ItemData boughtItem = ServerManager.Instance.ItemsManager.CreateItemData(new ItemData()
+                                {
+                                    baseId = data.baseId,
+                                });
+
+                                arg1.SelectedCharacter.AddStatInt(StatType.GOLD, -prototype.price);
+                                arg1.SelectedCharacter.GetItemsContainer(ItemsContainerId.INVENTORY).AddItem(freeInventorySlot, boughtItem);
+                            }
+                        }
+                    }
+                }
             }
         }
 
