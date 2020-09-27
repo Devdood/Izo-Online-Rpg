@@ -22,7 +22,20 @@ public class GamePacketsImpl
         { GamePacketType.EXECUTE_SKILL_TARGET, ExecuteSkillImpl },
         { GamePacketType.SET_POSITION, SetPositionImpl },
         { GamePacketType.CHAT_MESSAGE_PACKET, ChatMessageImpl },
+        { GamePacketType.OPEN_PANEL_UI , OpenPanelImpl },
     };
+
+    private static void OpenPanelImpl(BinaryReader reader)
+    {
+        byte panel = reader.ReadByte();
+
+        switch(panel)
+        {
+            case (byte)0:
+                GameObject.FindObjectOfType<UIWarehouse>().GetComponent<UIPanel>().Activate();
+                break;
+        }
+    }
 
     private static void ChatMessageImpl(BinaryReader reader)
     {

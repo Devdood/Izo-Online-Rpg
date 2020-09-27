@@ -139,7 +139,7 @@ namespace WebSocketMMOServer.GameServer
                         }
                     }
 
-                    ServerManager.Instance.QuestsManager.ExecuteEvent(QuestEvent.MONSTER_DEFEAT, ((Player)character).DatabaseId, target.BaseId);
+                    ServerManager.Instance.QuestsManager.ExecuteEventsForAll(QuestEvent.MONSTER_DEFEAT, character.Id, target.BaseId);
                 }
 
                 if (character is Mob)

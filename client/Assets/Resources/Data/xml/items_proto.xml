@@ -1,0 +1,53 @@
+<?xml version="1.0" ?>
+<!DOCTYPE items_proto [
+  <!ELEMENT items_proto (DATA_RECORD*)>
+  <!ELEMENT DATA_RECORD (id?,name?,req_level?,price?)+>
+  <!ELEMENT id (#PCDATA)>
+  <!ELEMENT name (#PCDATA)>
+  <!ELEMENT req_level (#PCDATA)>
+  <!ELEMENT price (#PCDATA)>
+]>
+<items_proto>
+  <DATA_RECORD>
+    <id>1</id>
+    <name>Sword</name>
+    <req_level>1</req_level>
+    <price>100</price>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <id>2</id>
+    <name>Solid Axe</name>
+    <req_level>3</req_level>
+    <price>100</price>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <id>3</id>
+    <name>Scimitar</name>
+    <req_level>5</req_level>
+    <price>100</price>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <id>4</id>
+    <name>Bone Sword</name>
+    <req_level>7</req_level>
+    <price>100</price>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <id>5</id>
+    <name>Battle Axe</name>
+    <req_level>9</req_level>
+    <price>100</price>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <id>6</id>
+    <name>Health Potion</name>
+    <req_level>1</req_level>
+    <price>100</price>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <id>7</id>
+    <name>Mana Potion</name>
+    <req_level>1</req_level>
+    <price>100</price>
+  </DATA_RECORD>
+</items_proto>

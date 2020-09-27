@@ -26,7 +26,7 @@ public class ItemHoverPanel : Singleton<ItemHoverPanel>
     {
         nameText.text = data.name;
         descriptionText.text = data.description;
-        reqLvlText.text = string.Format("Lv. {0}", data.reqLevel);
+        reqLvlText.text = string.Format("Lv. {0}", data.ReqLevel);
     }
 
     private void LateUpdate()

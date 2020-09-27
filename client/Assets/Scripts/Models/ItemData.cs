@@ -11,5 +11,5 @@ public class ItemData : ScriptableObject
     public Sprite icon;
     public UMAWardrobeRecipe equippable;
     public string description;
-    public int reqLevel;
+    public int ReqLevel { get; set; }
 }

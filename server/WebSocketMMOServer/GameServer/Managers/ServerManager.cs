@@ -22,6 +22,7 @@ namespace WebSocketMMOServer.GameServer
         public SkillsManager SkillsManager { get; private set; }
         public ShopManager ShopManager { get; private set; }
         public QuestsManager QuestsManager { get; private set; }
+        public QuestFlagsManager QuestFlags { get; private set; }
 
         public ServerManager()
         {
@@ -35,6 +36,7 @@ namespace WebSocketMMOServer.GameServer
             SkillsManager = new SkillsManager();
             CharactersManager = new CharactersManager();
             ClientsManager = new ClientsManager();
+            QuestFlags = new QuestFlagsManager();
             CombatManager = new CombatManager(TickManager, CharactersManager);
             RespawnManager = new RespawnManager(TickManager, CharactersManager);
             fovManager = new FieldOfViewManager(TickManager, CharactersManager);

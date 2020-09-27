@@ -9,6 +9,7 @@ using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using WebSocketMMOServer.Database;
 using WebSocketMMOServer.GameServer;
+using WebSocketMMOServer.GameServer.Managers;
 using WebSocketMMOServer.GameServer.Packets.Outgoing;
 
 namespace WebSocketMMOServer
@@ -278,6 +279,16 @@ namespace WebSocketMMOServer
                         }
                     }
 
+                    if (c.OnClick == ClickType.NPC)
+                    {
+                        Character target = ServerManager.Instance.CharactersManager.GetCharacterById((int)targetId);
+
+                        if(target != null)
+                        {
+                            ServerManager.Instance.QuestsManager.ExecuteEventsForAll(QuestEvent.NPC_CLICK, client.SelectedCharacter.Id, target.BaseId);
+                        }
+                    }
+
                     break;
             }
         }
@@ -361,6 +372,22 @@ namespace WebSocketMMOServer
 
                 ServerManager.Instance.CharactersManager.AddCharacter(character);
                 ServerManager.Instance.CharactersManager.clients.Add(character.Id, client);
+
+                var questContainer = ServerManager.Instance.QuestFlags.GetContainer(character.Id);
+                DataTable questFlagsTable = DatabaseManager.ReturnQuery(string.Format("SELECT * FROM quest_flags WHERE player_id='{0}'", character.DatabaseId));
+                for (int i = 0; i < questFlagsTable.Rows.Count; i++)
+                {
+                    DataRow itemRow = questFlagsTable.Rows[i];
+
+                    QuestFlag flag = new QuestFlag()
+                    {
+                        questName = (string)itemRow["quest_name"],
+                        flag = (string)itemRow["flag"],
+                        value = (int)itemRow["flag_val"],
+                    };
+
+                    questContainer.SetQuestFlagInt(flag.questName, flag);
+                }
 
                 Dictionary<int, Character> table = ServerManager.Instance.CharactersManager.GetCharactersInRange<Character>(client.SelectedCharacter.Position, 50);
                 //Send all characters

@@ -19,6 +19,8 @@ namespace WebSocketMMOServer.GameServer.Managers
             { QuestEvent.DIED, "died" },
             { QuestEvent.INVENTORY_CHANGED, "inventoryChanged" },
             { QuestEvent.QUEST_STATE_CHANGED, "questUpdated" },
+            { QuestEvent.NPC_CLICK, "npcClick" },
+            { QuestEvent.LOGIN, "login" },
         };
 
         public QuestsManager()
@@ -44,6 +46,7 @@ namespace WebSocketMMOServer.GameServer.Managers
                 Lua state = new Lua();
                 state["quest"] = q;
                 state["state"] = 1;
+                state["playerId"] = 1;
 
                 try
                 {
@@ -57,62 +60,36 @@ namespace WebSocketMMOServer.GameServer.Managers
             }
         }
 
-        public void ExecuteEvent(QuestEvent ev, params object[] args)
+        public void ExecuteEventForSingle(QuestEvent ev, int playerId, string questName, params object[] args)
+        {
+            var impl = questImplementations[questName];
+            string func = functions[ev];
+
+            var container = ServerManager.Instance.QuestFlags.GetContainer(playerId);
+            if(container == null)
+            {
+                Console.WriteLine("Quest container: " + playerId + " is null");
+                return;
+            }
+
+            impl["state"] = container.GetQuestFlagInt(questName, "state");
+            impl["playerId"] = playerId;
+
+            var scriptFunc = impl[func] as LuaFunction;
+            if (scriptFunc != null)
+            {
+                var res = scriptFunc.Call(args);
+                Console.WriteLine("Execute: " + questName + " EV: " + ev);
+            }
+        }
+
+        public void ExecuteEventsForAll(QuestEvent ev, int playerId, params object[] args)
         {
             string func = functions[ev];
 
             foreach (var impl in questImplementations)
             {
-                impl.Value["state"] = 1;
-                var scriptFunc = impl.Value[func] as LuaFunction;
-                if (scriptFunc != null)
-                {
-                    var res = scriptFunc.Call(args);
-                    Console.WriteLine("Execute q");
-                }
-            }
-        }
-    }
-
-    public class LuaQuest
-    {
-        public int GetPlayerQuestFlagInt(int playerId, string questName, string questFlag)
-        {
-            return 3;
-        }
-
-        public void SetPlayerQuestFlag(int playerId, string questName, string questFlag)
-        {
-
-        }
-
-        public void SetQuestState(int playerId, string questName, int state)
-        {
-            ServerManager.Instance.QuestsManager.ExecuteEvent(QuestEvent.QUEST_STATE_CHANGED, playerId, questName, state);
-        }
-
-        public void Log(string log)
-        {
-            Console.WriteLine(log);
-        }
-
-        public int FinishQuest(int playerId, string questName)
-        {
-            Console.WriteLine("Player finished quest: " + questName);
-            return 1;
-        }
-
-        public void GivePlayerItem(int playerId, int itemId, int amount)
-        {
-            Console.WriteLine("Player give item: " + itemId);
-            Character c = ServerManager.Instance.CharactersManager.GetCharacterById(playerId);
-            if(c != null)
-            {
-                c.GetItemsContainer(ItemsContainerId.INVENTORY).AddItemToFreeSlot(ServerManager.Instance.ItemsManager.CreateItemData(new ItemData()
-                {
-                    baseId = itemId,
-                    amount = amount
-                }));
+                ExecuteEventForSingle(ev, playerId, impl.Key, args);
             }
         }
     }
@@ -124,4 +101,6 @@ public enum QuestEvent
     DIED = 2,
     INVENTORY_CHANGED = 3,
     QUEST_STATE_CHANGED = 4,
+    NPC_CLICK = 5,
+    LOGIN = 6,
 }

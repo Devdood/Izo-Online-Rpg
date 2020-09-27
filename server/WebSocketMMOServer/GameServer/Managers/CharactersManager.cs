@@ -29,6 +29,16 @@ namespace WebSocketMMOServer.GameServer
 
         public static int lastId = 1;
 
+        public Client GetClient(int playerId)
+        {
+            if(clients.ContainsKey(playerId))
+            {
+                return clients[playerId];
+            }
+
+            return null;
+        }
+
         public CharactersManager()
         {
             DataTable mobsProtoTable = DatabaseManager.ReturnQuery("SELECT * FROM mobs_proto");
@@ -105,6 +115,7 @@ namespace WebSocketMMOServer.GameServer
             Player character = new Player(lastId++);
             ServerManager.Instance.StatsManager.AddStatsForCharacter(character);
             ServerManager.Instance.ItemsManager.AddInventoryForCharacter(character);
+            ServerManager.Instance.QuestFlags.AddContainer(character.Id);
             return character;
         }
 
@@ -120,8 +131,12 @@ namespace WebSocketMMOServer.GameServer
 
             if (character is Player)
             {
-                ServerManager.Instance.StatsManager.SaveStatisticsToDatabase((Player)character);
+                var player = (Player)character;
+                ServerManager.Instance.StatsManager.SaveStatisticsToDatabase(player);
+                ServerManager.Instance.QuestFlags.SaveFlagsToDatabase(player);
+
                 ServerManager.Instance.ItemsManager.RemoveInventoryForCharacter(character.Id);
+                ServerManager.Instance.QuestFlags.RenoiveContainer(character.Id);
             }
 
             ServerManager.Instance.StatsManager.RemoveStatsForCharacter(character.Id);
